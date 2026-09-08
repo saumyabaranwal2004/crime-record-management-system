@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS CRMS — Crime Records Management System</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+
+<!-- ============================================================
+     SCAN LINE OVERLAY (aesthetic)
+============================================================ -->
+<div class="scanlines"></div>
+<div class="noise-overlay"></div>
+
+<!-- ============================================================
+     GLOBAL NAVIGATION
+============================================================ -->
+<nav class="global-nav" id="globalNav">
+  <div class="nav-brand">
+    <span class="brand-icon"><i class="fa-solid fa-shield-halved"></i></span>
+    <span class="brand-text">NEXUS<span class="brand-accent">CRMS</span></span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" class="nav-link active" data-page="landing"><i class="fa-solid fa-house"></i> Home</a></li>
+    <li><a href="#" class="nav-link" data-page="search"><i class="fa-solid fa-magnifying-glass"></i> Cases</a></li>
+    <li><a href="#" class="nav-link" data-page="dashboard"><i class="fa-solid fa-chart-line"></i> Analytics</a></li>
+    <li id="navMyReports" style="display:none"><a href="#" class="nav-link" data-page="myreports"><i class="fa-solid fa-folder-user"></i> My Reports</a></li>
+    <li><a href="#" class="nav-link" data-page="alerts"><i class="fa-solid fa-bell"></i> Alerts <span class="badge" id="alertBadge">3</span></a></li>
+    <li id="navManage" style="display:none"><a href="#" class="nav-link" data-page="manage"><i class="fa-solid fa-database"></i> Manage</a></li>
+  </ul>
+  <div class="nav-actions">
+    <div class="user-pill" id="userPill" style="display:none">
+      <i class="fa-solid fa-circle-user"></i>
+      <span id="userPillName">Officer</span>
+      <span class="role-tag" id="userPillRole">—</span>
+    </div>
+    <button class="btn-nav-login" id="navLoginBtn" data-page="login"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+    <button class="btn-nav-logout" id="navLogoutBtn" style="display:none"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    <button class="hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     PAGE: LANDING
+============================================================ -->
+<section class="page active" id="pageLanding">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow"><span class="pulse-dot"></span> SYSTEM ACTIVE — SECURE CHANNEL</div>
+      <h1 class="hero-title">
+        <span class="title-line-1">NEXUS</span>
+        <span class="title-line-2">CRIME RECORDS</span>
+        <span class="title-line-3">MANAGEMENT SYSTEM</span>
+      </h1>
+      <p class="hero-sub">A unified intelligence platform for law enforcement agencies. Manage, analyze, and act on criminal data with precision and speed.</p>
+      <div class="hero-cta">
+        <button class="btn-primary" data-page="login"><i class="fa-solid fa-fingerprint"></i> Secure Login</button>
+        <button class="btn-secondary" data-page="search"><i class="fa-solid fa-folder-open"></i> Browse Cases</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num" data-target="1247">0</span>
+          <span class="stat-label">Cases Filed</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="389">0</span>
+          <span class="stat-label">Resolved</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="42">0</span>
+          <span class="stat-label">Active Alerts</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" data-target="18">0</span>
+          <span class="stat-label">Districts Covered</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="radar-container">
+        <div class="radar-ring r1"></div>
+        <div class="radar-ring r2"></div>
+        <div class="radar-ring r3"></div>
+        <div class="radar-sweep"></div>
+        <div class="radar-dot d1"></div>
+        <div class="radar-dot d2"></div>
+        <div class="radar-dot d3"></div>
+        <div class="radar-dot d4"></div>
+        <div class="radar-center"><i class="fa-solid fa-shield-halved"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Cards -->
+  <div class="features-section">
+    <div class="section-tag">CORE MODULES</div>
+    <div class="features-grid">
+      <div class="feature-card" data-page="search">
+        <div class="feature-icon"><i class="fa-solid fa-magnifying-glass-location"></i></div>
+        <h3>Case Search</h3>
+        <p>Filter records by ID, victim, suspect, location, or crime type with real-time results.</p>
+        <span class="feature-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </div>
+      <div class="feature-card" data-page="dashboard">
+        <div class="feature-icon"><i class="fa-solid fa-chart-area"></i></div>
+        <h3>Data Analytics</h3>
+        <p>Heatmaps, year-wise trends, and crime distribution charts for actionable intelligence.</p>
+        <span class="feature-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </div>
+      <div class="feature-card" data-page="alerts">
+        <div class="feature-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <h3>Live Alerts</h3>
+        <p>Stay updated with critical crime alerts, warnings, and major incident headlines.</p>
+        <span class="feature-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </div>
+      <div class="feature-card" data-page="manage">
+        <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <h3>Officer Portal</h3>
+        <p>Full CRUD access for law enforcement officers to manage the case database.</p>
+        <span class="feature-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity Ticker -->
+  <div class="ticker-bar">
+    <span class="ticker-label"><i class="fa-solid fa-satellite-dish"></i> LIVE FEED</span>
+    <div class="ticker-track" id="tickerTrack">
+      <span>⬤ Case #CR-2024-1089 updated — Robbery — Koramangala &nbsp;&nbsp;&nbsp; ⬤ Suspect apprehended in Case #CR-2024-1067 &nbsp;&nbsp;&nbsp; ⬤ New case filed: Armed Robbery — MG Road &nbsp;&nbsp;&nbsp; ⬤ Alert: Pickpocket surge reported in Marathahalli &nbsp;&nbsp;&nbsp; ⬤ Case #CR-2024-1045 closed — Resolved &nbsp;&nbsp;&nbsp; ⬤ Officer Unit-7 dispatched to Whitefield incident</span>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     PAGE: LOGIN
+============================================================ -->
+<section class="page" id="pageLogin">
+  <div class="login-container">
+
+    <div class="login-panel">
+
+      <div class="login-header">
+        <div class="login-shield">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <h2>NEXUS CRMS</h2>
+        <p>Authorized Personnel Only</p>
+      </div>
+
+      <div class="role-selector">
+        <button class="role-btn active" data-role="citizen">
+          <i class="fa-solid fa-user"></i>
+          Citizen User
+        </button>
+
+        <button class="role-btn" data-role="officer">
+          <i class="fa-solid fa-badge-sheriff"></i>
+          Law Officer
+        </button>
+      </div>
+
+      <!-- LOGIN SECTION -->
+      <div id="loginSection">
+
+        <div class="login-form">
+
+          <div class="form-group">
+            <label>
+              <i class="fa-solid fa-user"></i>
+              Username
+            </label>
+
+            <input
+              type="text"
+              id="loginUser"
+              placeholder="Enter username"
+              autocomplete="off"
+            />
+
+            <span class="field-hint" id="userHint">
+              Enter your username
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <i class="fa-solid fa-lock"></i>
+              Password
+            </label>
+
+            <input
+              type="password"
+              id="loginPass"
+              placeholder="Enter password"
+            />
+
+            <span class="field-hint">
+              Secure authentication enabled
+            </span>
+          </div>
+
+          <div class="form-error" id="loginError"></div>
+
+          <button class="btn-login" id="loginBtn">
+            <i class="fa-solid fa-fingerprint"></i>
+            Authenticate
+          </button>
+
+        </div>
+
+        <!-- SIGNUP TOGGLE -->
+        <div
+          style="
+            margin-top:20px;
+            text-align:center;
+            color:#7a90b0;
+            font-size:14px;
+          "
+        >
+          Don't have an account?
+
+          <a
+            href="#"
+            id="showRegister"
+            style="
+              color:#3b82f6;
+              text-decoration:none;
+              margin-left:6px;
+            "
+          >
+            Create Account
+          </a>
+        </div>
+
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div
+        class="register-form hidden"
+        id="registerForm"
+        style="margin-top:24px;"
+      >
+
+        <div class="form-group">
+          <label>
+            <i class="fa-solid fa-user-plus"></i>
+            Username
+          </label>
+
+          <input
+            type="text"
+            id="regUser"
+            placeholder="Choose username"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>
+            <i class="fa-solid fa-envelope"></i>
+            Email
+          </label>
+
+          <input
+            type="email"
+            id="regEmail"
+            placeholder="Enter email"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>
+            <i class="fa-solid fa-lock"></i>
+            Password
+          </label>
+
+          <input
+            type="password"
+            id="regPass"
+            placeholder="Create password"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>
+            <i class="fa-solid fa-lock"></i>
+            Confirm Password
+          </label>
+
+          <input
+            type="password"
+            id="regPass2"
+            placeholder="Confirm password"
+          />
+        </div>
+
+        <div class="form-error" id="registerError"></div>
+
+        <button class="btn-login" id="regBtn">
+          <i class="fa-solid fa-user-plus"></i>
+          Create Account
+        </button>
+
+        <button
+  class="btn-login btn-back-login"
+  id="backToLoginBtn"
+  type="button"
+>
+  <i class="fa-solid fa-arrow-left"></i>
+  Back to Login
+</button>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="login-footer">
+        <i class="fa-solid fa-lock"></i>
+        256-bit encrypted connection
+        &nbsp;|&nbsp;
+
+        <a href="#" data-page="landing">
+          ← Back to Home
+        </a>
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="login-deco">
+
+      <div class="deco-lines"></div>
+
+      <div class="deco-text">
+
+        <p>ACCESS LEVEL</p>
+
+        <div class="access-badge" id="accessBadge">
+          CITIZEN
+        </div>
+
+        <ul class="access-list" id="accessList">
+
+          <li>
+            <i class="fa-solid fa-check"></i>
+            Search case records
+          </li>
+
+          <li>
+            <i class="fa-solid fa-check"></i>
+            View case details
+          </li>
+
+          <li>
+            <i class="fa-solid fa-check"></i>
+            Report incidents
+          </li>
+
+          <li class="locked">
+            <i class="fa-solid fa-lock"></i>
+            Add/Edit records
+          </li>
+
+          <li class="locked">
+            <i class="fa-solid fa-lock"></i>
+            Delete records
+          </li>
+
+          <li class="locked">
+            <i class="fa-solid fa-lock"></i>
+            Officer dashboard
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     PAGE: SEARCH / CASES
+============================================================ -->
+<section class="page" id="pageSearch">
+  <div class="page-header">
+    <div class="page-title-block">
+      <div class="page-icon"><i class="fa-solid fa-folder-open"></i></div>
+      <div>
+        <h2 class="page-title">CASE RECORDS</h2>
+        <p class="page-sub">Search and filter crime records database</p>
+      </div>
+    </div>
+    <button class="btn-primary" id="reportCaseBtn"><i class="fa-solid fa-plus"></i> Report Case</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <i class="fa-solid fa-hashtag"></i>
+      <input type="text" id="filterID" placeholder="Case ID" />
+    </div>
+    <div class="filter-group">
+      <i class="fa-solid fa-user-injured"></i>
+      <input type="text" id="filterVictim" placeholder="Victim Name" />
+    </div>
+    <div class="filter-group">
+      <i class="fa-solid fa-user-secret"></i>
+      <input type="text" id="filterSuspect" placeholder="Suspect Name" />
+    </div>
+    <div class="filter-group">
+      <i class="fa-solid fa-location-dot"></i>
+      <input type="text" id="filterArea" placeholder="Area / Location" />
+    </div>
+    <div class="filter-group">
+      <i class="fa-solid fa-tag"></i>
+      <select id="filterType">
+        <option value="">All Crime Types</option>
+        <option>Theft</option>
+        <option>Robbery</option>
+        <option>Assault</option>
+        <option>Fraud</option>
+        <option>Cybercrime</option>
+        <option>Murder</option>
+        <option>Kidnapping</option>
+        <option>Vandalism</option>
+        <option>Drug Offense</option>
+      </select>
+    </div>
+    <button class="btn-filter" id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+    <button class="btn-clear" id="clearBtn"><i class="fa-solid fa-xmark"></i> Clear</button>
+  </div>
+
+  <!-- Results Info -->
+  <div class="results-meta" id="resultsMeta">Showing all <strong id="resultCount">0</strong> records</div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <table class="cases-table" id="casesTable">
+      <thead>
+        <tr>
+          <th>Case ID</th>
+          <th>Date</th>
+          <th>Crime Type</th>
+          <th>Victim</th>
+          <th>Suspect</th>
+          <th>Location</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="casesTableBody"></tbody>
+    </table>
+    <div class="no-results" id="noResults" style="display:none">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <p>No records match your search criteria.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PAGE: DASHBOARD / ANALYTICS
+============================================================ -->
+<section class="page" id="pageDashboard">
+  <div class="page-header">
+    <div class="page-title-block">
+      <div class="page-icon"><i class="fa-solid fa-chart-line"></i></div>
+      <div>
+        <h2 class="page-title">ANALYTICS DASHBOARD</h2>
+        <p class="page-sub">Crime intelligence and statistical insights</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card kpi-red">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <div class="kpi-num" id="kpiOpen">—</div>
+      <div class="kpi-label">Open Cases</div>
+    </div>
+    <div class="kpi-card kpi-green">
+      <i class="fa-solid fa-circle-check"></i>
+      <div class="kpi-num" id="kpiClosed">—</div>
+      <div class="kpi-label">Resolved</div>
+    </div>
+    <div class="kpi-card kpi-yellow">
+      <i class="fa-solid fa-hourglass-half"></i>
+      <div class="kpi-num" id="kpiInv">—</div>
+      <div class="kpi-label">Under Investigation</div>
+    </div>
+    <div class="kpi-card kpi-blue">
+      <i class="fa-solid fa-folder"></i>
+      <div class="kpi-num" id="kpiTotal">—</div>
+      <div class="kpi-label">Total Records</div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card chart-large">
+      <div class="chart-header">
+        <h3><i class="fa-solid fa-chart-line"></i> Year-wise Crime Statistics</h3>
+        <span class="chart-tag">2018–2024</span>
+      </div>
+      <canvas id="yearChart" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3><i class="fa-solid fa-chart-pie"></i> Crime Type Distribution</h3>
+      </div>
+      <canvas id="typeChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="charts-row" style="padding-top: 0;">
+    <div class="chart-card full-width">
+      <div class="chart-header">
+        <h3><i class="fa-solid fa-map-location-dot"></i> Geographical Distribution</h3>
+      </div>
+      <div id="indiaMap" style="height:340px; border-radius:12px; width: 100%;"></div>
+    </div>
+  </div>
+
+  <div class="heatmap-section">
+    <div class="chart-card full-width">
+      <div class="chart-header">
+        <h3><i class="fa-solid fa-map-location-dot"></i> High-Crime Area Heatmap — Bengaluru Region</h3>
+        <div class="heatmap-legend">
+          <span class="leg leg-critical">Critical</span>
+          <span class="leg leg-high">High</span>
+          <span class="leg leg-medium">Medium</span>
+          <span class="leg leg-low">Low</span>
+        </div>
+      </div>
+      <div class="heatmap-grid" id="heatmapGrid"></div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card full-width">
+      <div class="chart-header">
+        <h3><i class="fa-solid fa-calendar-days"></i> Monthly Crime Volume — 2024</h3>
+      </div>
+      <canvas id="monthlyChart" height="160"></canvas>
+    </div>
+  </div>
+
+</section>
+<section class="page" id="pageMyreports">
+  <div class="page-header">
+    <div class="page-title-block">
+      <div class="page-icon"><i class="fa-solid fa-folder-user"></i></div>
+      <div>
+        <h2 class="page-title">MY REPORTS</h2>
+        <p class="page-sub">Track the status of your reported incidents</p>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="openCaseModal(null)"><i class="fa-solid fa-plus"></i> File New Report</button>
+  </div>
+  <div class="alerts-grid" id="myReportsGrid">
+    </div>
+</section>
+
+<section class="page" id="pageManage">
+  <div class="page-header">
+    <div class="page-title-block">
+      <div class="page-icon"><i class="fa-solid fa-database"></i></div>
+      <div>
+        <h2 class="page-title">MANAGE RECORDS</h2>
+        <p class="page-sub">Law Enforcement Officer Portal</p>
+      </div>
+    </div>
+    <div class="alert-filter-tabs">
+      <button class="atab active" id="btnFilterAll">🏢 All Cases</button>
+      <button class="atab" id="btnFilterIncoming">🚨 Incoming Reports</button>
+    </div>
+  </div>
+
+  <div class="manage-table-wrapper">
+    <table class="cases-table manage-table" id="manageTable">
+      <thead>
+        <tr>
+          <th>Case ID</th>
+          <th>Date</th>
+          <th>Crime Type</th>
+          <th>Victim</th>
+          <th>Suspect</th>
+          <th>Location</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="manageTableBody"></tbody>
+    </table>
+  </div>
+</section>
+<!-- ============================================================
+ 
+     PAGE: ALERTS
+============================================================ -->
+<section class="page" id="pageAlerts">
+  <div class="page-header">
+    <div class="page-title-block">
+      <div class="page-icon"><i class="fa-solid fa-bell"></i></div>
+      <div>
+        <h2 class="page-title">CRIME ALERTS</h2>
+        <p class="page-sub">Latest warnings, major incidents & headlines</p>
+      </div>
+    </div>
+    <div class="alert-filter-tabs">
+      <button class="atab active" data-filter="all">All</button>
+      <button class="atab" data-filter="critical">Critical</button>
+      <button class="atab" data-filter="warning">Warning</button>
+      <button class="atab" data-filter="info">Info</button>
+    </div>
+  </div>
+  <div class="alerts-grid" id="alertsGrid"></div>
+</section>
+
+<!-- ============================================================
+     PAGE: MANAGE (Officer Only)
+============================================================ -->
+<section class="page" id="pageManage">
+  <div class="page-header">
+    <div class="page-title-block">
+      <div class="page-icon"><i class="fa-solid fa-database"></i></div>
+      <div>
+        <h2 class="page-title">MANAGE RECORDS</h2>
+        <p class="page-sub">Full CRUD access — Law Enforcement Officers only</p>
+      </div>
+    </div>
+    <button class="btn-primary" id="addCaseBtn"><i class="fa-solid fa-plus"></i> Add New Case</button>
+  </div>
+
+  <div class="manage-table-wrapper">
+    <table class="cases-table manage-table" id="manageTable">
+      <thead>
+        <tr>
+          <th>Case ID</th>
+          <th>Date</th>
+          <th>Crime Type</th>
+          <th>Victim</th>
+          <th>Suspect</th>
+          <th>Location</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="manageTableBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================
+     MODAL: Add / Edit Case
+============================================================ -->
+<div class="modal-overlay" id="caseModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modalTitle"><i class="fa-solid fa-folder-plus"></i> Add New Case</h3>
+      <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Crime Type *</label>
+          <select id="mType">
+            <option value="">Select type</option>
+            <option>Theft</option>
+            <option>Robbery</option>
+            <option>Assault</option>
+            <option>Fraud</option>
+            <option>Cybercrime</option>
+            <option>Murder</option>
+            <option>Kidnapping</option>
+            <option>Vandalism</option>
+            <option>Drug Offense</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="mDate"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Victim Name *</label>
+          <input type="text" id="mVictim" placeholder="Full name"/>
+        </div>
+        <div class="form-group">
+          <label>Suspect Name</label>
+          <input type="text" id="mSuspect" placeholder="Known or Unknown"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Location / Area *</label>
+          <input type="text" id="mLocation" placeholder="District, Area"/>
+        </div>
+        <div class="form-group">
+          <label>Status *</label>
+          <select id="mStatus">
+            <option value="Open">Open</option>
+            <option value="Under Investigation">Under Investigation</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group full-width">
+        <label>Case Description</label>
+        <textarea id="mDesc" rows="3" placeholder="Brief description of the incident..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="form-error" id="modalError"></div>
+      <button class="btn-secondary" id="modalCancel">Cancel</button>
+      <button class="btn-primary" id="modalSave"><i class="fa-solid fa-floppy-disk"></i> Save Case</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: View Case Detail
+============================================================ -->
+<div class="modal-overlay" id="viewModal">
+  <div class="modal-box modal-view">
+    <div class="modal-header">
+      <h3 id="viewModalTitle"><i class="fa-solid fa-file-lines"></i> Case Details</h3>
+      <button class="modal-close" id="viewModalClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="viewModalBody"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TOAST NOTIFICATION
+============================================================ -->
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
